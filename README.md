@@ -45,7 +45,8 @@ distribution in `/opt/`. At the time of writing this README, the
 current Tomcat distribution was `apache-tomcat-9.0.58.tar.gz`, so this
 results in an installation at `/opt/apache-tomcat-9.0.58/`. (Don't
 forget to verify previously that your downloaded Tomcat distribution
-is uncorrupted by checking XXX.)
+is uncorrupted by checking its integrity. The Apache Tomcat provides
+GPG signatures for all distributed files, use them!)
 
 We add a symlink `/opt/apache-tomcat9` that points to the installation
 directory, here `/opt/apache-tomcat-9.0.58`. This symlink will allow
