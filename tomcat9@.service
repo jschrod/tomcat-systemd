@@ -1,0 +1,51 @@
+# This file was written by Joachim Schrod <jschrod@acm.org>.
+# It is placed in the Public domain. Your are allowed to delete my
+# name and email address from this file.
+
+[Unit]
+Description=Apache Tomcat9 server for %i instance
+After=network.target remote-fs.target
+
+[Service]
+Type=forking
+
+# Specify common env vars for all Tomcat9 instances here.
+# Or, if you have only one instance, specify all stuff here.
+EnvironmentFile=/etc/tomcat/tomcat9.conf
+
+# Specify env vars for this Tomcat instance here.
+# Especially, $CATALINA_BASE must be set in this file.
+EnvironmentFile=-/etc/tomcat/tomcat9-%i.conf
+
+# Tomcat uses a classic init.d-style script that starts/stops.
+ExecStart=/opt/apache-tomcat9/bin/catalina.sh start
+ExecStop=/opt/apache-tomcat9/bin/catalina.sh stop
+Restart=on-abort
+
+# Btw, reload is not supported, inherently, by Tomcat -- one would
+# have to redeploy all applications and this potentially would be a
+# session-loosing affair that might not go well with our users. (We
+# cannot assume cluster operations all the time!)
+
+# In one of the EnvironmentFiles above, $CATALINA_PID should be
+# specified, in a location that's writable by the Tomcat server user.
+#
+# Systemd's PIDFile does not fit to this use case. Systemd PID file
+# guessing code does not work, disable it.
+GuessMainPID=false
+
+# Default for User/Group. You might want/need to establish an
+# /etc/systemd/system/tomcat@INSTANCE.service.d/user.conf with
+# User/Group settings for each instance.
+User=tomcat
+Group=tomcat
+
+# Btw: Don't set systemd's UMask here. This is Tomcat's wrongdoing,
+# you need to set the env var UMASK in one of the EnvironmentFiles.
+
+[Install]
+WantedBy=multi-user.target
+
+# If you don't have instances, you can put all your definitions in
+# /etc/tomcat/tomcat.conf and start/enable tomcat@default.service.
+DefaultInstance=default
